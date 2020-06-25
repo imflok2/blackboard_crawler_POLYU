@@ -43,5 +43,10 @@ bb_main_page = sess.get('https://blackboard.cuhk.edu.hk')
 next_url_1 = re.findall('url=(.+)', bb_main_page.text)[0]
 print(next_url_1)
 
+#~  git clone https://github.com/.../... .git
+#~  cd bootstrap
+#~  git checkout -b test-pr
+#~  git add . && git commit -m "test-pr"
+#~  git push origin test-pr
 
 
