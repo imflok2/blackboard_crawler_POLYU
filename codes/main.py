@@ -1,7 +1,84 @@
-from tkinter import *
-import inspect
-import traceback
+import re
+from bs4 import BeautifulSoup
 import requests
-import urllib.request as urllib2
-https://adfs.polyu.edu.hk/adfs/ls/?SAMLRequest=fVLLbsIwEPwVa%2B%2BJ45ACsUgQLUJFogKR0EMvyAlOsRps6nVQ%2B%2FdNeai0UrlYWnt2xjuzg%2BHHriYHaVEZnQDzAyBSl2aj9GsCq3zi9WGYDlDs6nDPR43b6qV8byQ60jZq5KeXBBqruRGokGuxk8hdybPR04yHfsD31jhTmhrICFFa10o9GI3NTtpM2oMq5Wo5S2Dr3B45pbUUVvt7U382vtw0%2FvaNilbY%2B5aixyPL5lTUSiBdx71eb82AjNsvKS3ccYwLk9hU%2BIeovaE1UiATY0t5HCiBStQogUzHCYgoLO5YJy6rigWR6nZUXHTZpscqFYedogXhQiCqg%2FxpQ2zkVKMT2iUQBmHgBV2PxTnr807IWehHQfQCZHG24V7pk723PCtOIOSPeb7wFvMsB%2FJ8iakFwDkUflS312ncJhaXCCD93%2FABvSZPz%2BXvBUi%2FAA%3D%3D&SigAlg=http%3A%2F%2Fwww.w3.org%2F2001%2F04%2Fxmldsig-more%23rsa-sha256&Signature=G%2F9K8dn96FtodeE2Ml%2BTzhxEWPDvQGCi7tOjcRCE%2FeKt%2FqZbDrQsucHuX47OPoapa%2F%2Fh7MJJ00%2Bccomad4xFxMiBKT2qKPhcPLBBOkozuG2bd2U29NgooZzSQRYwWkwCKnS7d%2FAeLmkpDSE5hE7948gjOdx0Goit3VuP8e6tGdnhTFvmrHSmnsTidtKNyOa4fzPUyVdmbDPh6xpQ4%2F%2B0EvLMhEfT9LMiG6DHVDBsLCuXerU0w7dIBhMfsq6Vd%2BLONjdYy%2FstGU22MWQL31vZkF%2BeTfimcR7CVbT4ANw%2Bop0vmxohxSGUe4%2Bk0iOFRbPP78L2VuHhjVX%2F2rJMXmECUA%3D%3D
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
+# redirect to the correct login page
+sess = requests.session()
+sess.headers = {'user-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'}
+url = 'https://learn.polyu.edu.hk/'
+front_page = sess.get(url)
+bs_front_page = BeautifulSoup(front_page.text,'html.parser')
+k = bs_front_page.find_all(href = True)
+Iwant = re.findall('[^\"]*(?:saml|SAML)[^\"]*',k.__str__())[0]
+print("Redirected to {}".format(url+Iwant))
+consent_cookie = {'name':'COOKIE_CONSENT_ACCEPTED','value':'true','Domain':'learn.polyu.edu.hk','expires':'2030-06-19T19:49:48.000Z'}
+
+
+#login blackboard
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+try:
+    driver = webdriver.Chrome(ChromeDriverManager().install())
+except:
+    print("error in loading driver")
+    exit()
+#driver = webdriver.Chrome("chromedriver_win32/chromedriver.exe")
+driver.get(url+Iwant)
+driver.add_cookie(consent_cookie)
+print("Make sure you can log in blackboard as in your browser.\nThe program can only crawl the courses included in \"My Course\".")
+print(f"If you wish to crawl last few sem courses, please add the courses into \"My Course\" manually (or you can pay me to code more:D).\nThis program is like automating the manual downloading from BC in browser.\nIt is slow sorry.:( ")
+#Lots more improvement can be made especially in finding the target
+while True:
+    username = input("enter student ID: ")
+    password = input("enter password: ")
+    driver.find_element_by_id("userNameInput").send_keys("16061778d")
+    driver.find_element_by_id("passwordInput").send_keys("Azxiop123")
+    driver.find_element_by_id("submitButton").click()
+    if driver.title.find('Welcome') != -1:
+        print('Logged in')
+        break
+    else:
+        print("Failed to log in")
+
+#a = driver.find_elements_by_class_name("termToggleLink itemHead")
+sem = driver.find_elements_by_partial_link_text('Sem') + driver.find_elements_by_partial_link_text('sem')
+ava_sem_text = [SEM.text for SEM in sem ]
+sem_id = [SEM.get_attribute("id")[4:] for SEM in sem ]
+#get courses of a particular sem link ///need to be def and incoperate
+ID = sem_id[2]
+courses = driver.find_elements_by_xpath("//div[@id='{}']/ul/li".format(ID))
+courses[1].click()
+
+
+
+a = driver.find_elements_by_css_selector('a')
+a_text = [A.text for A in a]
+#open close
+li = driver.find_elements_by_css_selector('ul.portletList-img')
+[SEM.click() for SEM in sem]
+li = li + driver.find_elements_by_css_selector('ul.portletList-img')
+[SEM.click() for SEM in sem]
+li_text = [LI.text for LI in li]
+sem[0].get_attribute("id")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+driver.close()

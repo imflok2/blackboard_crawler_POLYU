@@ -371,7 +371,7 @@ class BlackboardCrawler:
     time.sleep(self.flags.SLEEP_TIME)
     next_url_3 = re.findall('action="(.+?)">',logging_in_resp.text)[0]
     SAMLResponse = re.findall('name="SAMLResponse" value="(.+?)" />',logging_in_resp.text)[0]
-    resp4 = self.sess.post(next_url_3, data = {'SAMLResponse': SAMLResponse})
+      resp4 = self.sess.post(next_url_3, data = {'SAMLResponse': SAMLResponse})
     time.sleep(self.flags.SLEEP_TIME)
     self.BC_log("logged in...")
 
