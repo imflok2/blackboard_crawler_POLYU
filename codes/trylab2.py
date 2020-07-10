@@ -122,4 +122,41 @@ cols_info = [(col.find_element_by_css_selector("span").get_attribute("title"),co
 #4. loop for each courses
 #5. loop for each sem
 #bonus crab videos from ultra
+#import sys
+# insert at 1, 0 is the script path (or '' in REPL)
+#from main import *
+
+def get_courses_info(pref_sems):
+    IDs = [Sems_info[1] for Sems_info in pref_sems]
+    courses = []
+    for ID in IDs:
+        if not driver.find_element_by_xpath("//div[@id='{}']/ul/li/a".format(ID)).text:
+            driver.find_element_by_id("afor"+ID).click()
+            #put a flag?
+        courses += driver.find_elements_by_xpath("//div[@id='{}']/ul/li/a".format(ID))
+#        courses_info = [(course.text,course.get_attribute("href")) for course in courses]
+        print("\n".join([i.text for i in courses]))
+    return [(course.text,course.get_attribute("href")) for course in courses]
+
+from codes.main import *
+loginBD(redirect())
+sems_info = get_sems_info()
+sems_info = pref_sems_info(sems_info)
+courses_info = get_courses_info(sems_info)
+
+driver.get(courses_info[0][1])
+cols = driver.find_elements_by_xpath("//ul[@id='courseMenuPalette_contents']/li/a")
+cols_info = [(col.find_element_by_css_selector("span").get_attribute("title"),col.get_attribute("href")) for col in cols]
+
+
+def find_all_materials(courses_info):
+    for cname,curl in courses_info:
+
+
+
+
+
+
+
+
 

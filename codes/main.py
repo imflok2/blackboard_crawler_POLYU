@@ -67,11 +67,11 @@ def pref_sems_info(sems_info):
     print("\n".join(str(i) + ": " + j for i, j in enumerate([i[0] for i in sems_info])))
     while True:
         index = input("Enter UNWANTED sem index(space separated if multiple): ")
-        swi = input("Confirmed?(Y/N)")
+        swi = input("Confirm?(Y/N)")
         if (swi=="Y"):
             try:
                 k = [int(i) for i in list(index.split())]
-                if not ((max(k) <= len(sems_info)-1) and (min(k)>=0) and (len(k)==len(set(k)))):
+                if not ((max(k) <= len(sems_info)-1) and (min(k)>=0) and (len(k)==len(set(k)))) or k:
                     raise ValueError
                 break
             except ValueError:
@@ -81,7 +81,7 @@ def pref_sems_info(sems_info):
 
 #get the courses names and urls in triple form
 #####sems_info = pref_sems_info(sems_info)
-def find_courses_info(pref_sems):
+def get_courses_info(pref_sems):
     IDs = [Sems_info[1] for Sems_info in pref_sems]
     courses = []
     for ID in IDs:
@@ -93,8 +93,6 @@ def find_courses_info(pref_sems):
         print("\n".join([i.text for i in courses]))
     return [(course.text,course.get_attribute("href")) for course in courses]
 
-def find_all_materials(courses_info):
-    for cname,curl in courses_info:
 
 
 
@@ -113,8 +111,3 @@ def find_all_materials(courses_info):
 
 
 
-
-
-
-
-driver.close()
