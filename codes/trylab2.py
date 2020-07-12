@@ -139,22 +139,41 @@ def get_courses_info(pref_sems):
     return [(course.text,course.get_attribute("href")) for course in courses]
 
 from codes.main import *
-loginBD(redirect())
+driver = loginBD(redirect())
 sems_info = get_sems_info()
 sems_info = pref_sems_info(sems_info)
+#may change to arrange according to sem
 courses_info = get_courses_info(sems_info)
+
+
 
 driver.get(courses_info[0][1])
 cols = driver.find_elements_by_xpath("//ul[@id='courseMenuPalette_contents']/li/a")
 cols_info = [(col.find_element_by_css_selector("span").get_attribute("title"),col.get_attribute("href")) for col in cols]
+##visualize info
+#print("\n".join(["{}: {}".format(i,j) for i,j in cols_info]))
 
+#k = ["Content","Tools"]
+#useless_set_name = [i for i,j in cols_info if i not in k]
+#hard code it
+useless_set_name = ['Tools','Home Page', 'Announcements', 'Calendar', 'Contacts', 'Discussions', 'Groups', 'Help', 'What if you have trouble viewing the Math symbols and formulas?', 'How to access useful resources in the following 3 E-Books?', 'Foundation Statistics', 'Foundation Mathematics', 'Engineering Mathematics', 'Mathematics Learning Support Centre', 'Library Resources']
+useful_set_info = [(i,j) for i,j in cols_info if i not in useless_set_name]
 
-def find_all_materials(courses_info):
-    for cname,curl in courses_info:
+import os
+import builtins
 
+#def find_all_materials(folder_info):
+#    for cname,curl in folder_info:
+folder_info = useful_set_info[0]
 
+def crawl_folder(folder_info):
+    driver.get(folder_info[1])
+    items = driver.find_elements_by_xpath("//ul[@id='content_listContainer']/li")
+    return [(item.find_element_by_css_selector("img").get_attribute("alt"),item.text,item.find_element_by_css_selector("a").get_attribute("href")) for item in items]
 
-
+os.makedirs("/download")
+os.makedirs("/download/{0}/{1}".format())
+def download_folder(info,prior-dir="/download")
 
 
 

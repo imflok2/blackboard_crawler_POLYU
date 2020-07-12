@@ -46,6 +46,8 @@ def loginBD(login_url):
             break
         else:
             print("Failed to log in")
+#thats tentative for trylab
+    return driver
 
 #a = driver.find_elements_by_class_name("termToggleLink itemHead")
 
@@ -71,7 +73,7 @@ def pref_sems_info(sems_info):
         if (swi=="Y"):
             try:
                 k = [int(i) for i in list(index.split())]
-                if not ((max(k) <= len(sems_info)-1) and (min(k)>=0) and (len(k)==len(set(k)))) or k:
+                if not ((max(k) <= len(sems_info)-1) and (min(k)>=0) and (len(k)==len(set(k))) and len(k)) :
                     raise ValueError
                 break
             except ValueError:
@@ -93,7 +95,10 @@ def get_courses_info(pref_sems):
         print("\n".join([i.text for i in courses]))
     return [(course.text,course.get_attribute("href")) for course in courses]
 
-
+def get_course_cols(course_info):
+    driver.get(course_info[1])
+    cols = driver.find_elements_by_xpath("//ul[@id='courseMenuPalette_contents']/li/a")
+    return [(col.find_element_by_css_selector("span").get_attribute("title"), col.get_attribute("href")) for col in cols]
 
 
 
