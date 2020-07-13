@@ -162,20 +162,48 @@ useful_set_info = [(i,j) for i,j in cols_info if i not in useless_set_name]
 import os
 import builtins
 
-#def find_all_materials(folder_info):
-#    for cname,curl in folder_info:
-folder_info = useful_set_info[0]
+col_info = useful_set_info[0]
 
+#it can crawl folder and col in panel
+#input one tuple as (name,href)
+#output list of tuple as (type,name,href)
 def crawl_folder(folder_info):
     driver.get(folder_info[1])
     items = driver.find_elements_by_xpath("//ul[@id='content_listContainer']/li")
     return [(item.find_element_by_css_selector("img").get_attribute("alt"),item.text,item.find_element_by_css_selector("a").get_attribute("href")) for item in items]
+download_url = "{0}/{1}/{2}".format(file_to_url,sem_name,col_name)
+os.makedirs(download_url)
+#It can download multiple folders and files, inputs as list of tuple (type,name,href)
+def download(infos,prior_dir="/download",download_pack=[]):
+    for info in infos:
+        if info[0] =="Content Folder":
+            os.mkdir(prior_dir+"/"+info[1])
+            download_pack += download(crawl_folder(info[1:]),prior_dir+"/"+info[1])
+        if info[0] =="File":
+            download_pack.append((prior_dir+"/"+info[1],info[2]))
+    return download_pack
 
-os.makedirs("/download")
-os.makedirs("/download/{0}/{1}".format())
-def download_folder(info,prior-dir="/download")
+for i in range(1,11):
+    try:
+        download_url = f"download{i}"
+        os.makedirs(download_url)
+        break
+    if i ==10:
+        print("remove some download files")
+        break
 
 
-
-
-
+from codes.main import *
+driver = loginBD(redirect())
+sems_info = get_sems_info()
+sems_info = pref_sems_info(sems_info)
+#may change to arrange according to sem
+courses_info = get_courses_info(sems_info)
+driver.get(courses_info[0][1])
+cols = driver.find_elements_by_xpath("//ul[@id='courseMenuPalette_contents']/li/a")
+cols_info = [(col.find_element_by_css_selector("span").get_attribute("title"),col.get_attribute("href")) for col in cols]
+useless_set_name = ['Tools','Home Page', 'Announcements', 'Calendar', 'Contacts', 'Discussions', 'Groups', 'Help', 'What if you have trouble viewing the Math symbols and formulas?', 'How to access useful resources in the following 3 E-Books?', 'Foundation Statistics', 'Foundation Mathematics', 'Engineering Mathematics', 'Mathematics Learning Support Centre', 'Library Resources']
+useful_set_info = [(i,j) for i,j in cols_info if i not in useless_set_name]
+col_info = useful_set_info[0]
+download_url = "/".join([f"download{i}",courses_info[0][0],col_info[0]])
+a = download(crawl_folder(col_info),prior_dir=download_url)

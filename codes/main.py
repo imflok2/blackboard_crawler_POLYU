@@ -4,6 +4,7 @@ import requests
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
+import time
 
 # redirect to the correct login page
 def redirect():
@@ -26,7 +27,7 @@ def loginBD(login_url):
         driver = webdriver.Chrome(ChromeDriverManager().install())
     except:
         print("error in loading driver")
-        exit()
+        #exit()
     #driver = webdriver.Chrome("chromedriver_win32/chromedriver.exe")
     driver.get(login_url)
     consent_cookie = {'name':'COOKIE_CONSENT_ACCEPTED','value':'true','Domain':'learn.polyu.edu.hk','expires':'2030-06-19T19:49:48.000Z'}
@@ -39,6 +40,7 @@ def loginBD(login_url):
         driver.find_element_by_id("userNameInput").send_keys("16061778d")
         driver.find_element_by_id("passwordInput").send_keys("Azxiop123")
         driver.find_element_by_id("submitButton").click()
+        time.sleep(4)
         if driver.title.find('Welcome') != -1:
             driver.add_cookie(consent_cookie)
             driver.refresh()
@@ -73,7 +75,7 @@ def pref_sems_info(sems_info):
         if (swi=="Y"):
             try:
                 k = [int(i) for i in list(index.split())]
-                if not ((max(k) <= len(sems_info)-1) and (min(k)>=0) and (len(k)==len(set(k))) and len(k)) :
+                if not ((max(k) <= len(sems_info)-1) and (min(k) >= 0) and (len(k) == len(set(k))) and len(k)):
                     raise ValueError
                 break
             except ValueError:
